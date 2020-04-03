@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load article_tags %}
+{% block title %} articles {% endblock %}
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>阅读，丰富头脑，善化行为</h1>
+    <p>这里已经有{% total_articles %}篇文章供你阅读</p> <!--这里是我们自定义的模板标签，返回ArticlePost.objects.count-->
+</div>
+<div class="container">
+    {% for article in articles %}
+    <div class="list-group">
+        <a href="{{article.get_url_path}}" class="list-group-item active">
+            <h4 class="list-group-item-heading">{{article.title}}</h4>
+        </a>
+        <p class="list-group-item-text">作者:<a href="{% url 'article:author_articles' article.author.username %}">{{article.author.username}}</a></p>
+        <!--slice:70表示从文章字符中取前70个展示，linebreakes表示原文的换行也继续产生效用-->
+        <p class="list-group-item-text">概要:{{article.body|slice:'70'| linebreaks}}</p>
+    </div>
+    {% endfor %}
+    {% include "paginator.html" %}
+</div>
+{% endblock %}

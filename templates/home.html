@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %} 主页 {% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1>欢迎访问本网站！</h1>
+    <h4>————人生苦短，我用python</h4>
+    <h3>Web框架采用django，参考自https://www.jianshu.com/p/ce4384ea5e06</h3>
+    {% load staticfiles %}
+    <img src="{% static 'images/logo.jpg' %}" width="200px">
+</div>
+{% endblock %}

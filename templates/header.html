@@ -1,0 +1,45 @@
+{% load staticfiles %}
+<div class="container">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static '/images/logo.jpg' %}" width="20px"></a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav" role="navigation">
+                <li><a href="{% url 'home' %}">网站主页</a></li>
+                <li><a href="{% url 'blog:blog_list' %}">博客</a></li>
+                <li><a href="{% url 'article:article_titles' %}">文章</a></li>
+                <li><a href="{% url 'image:falls_images' %}">美图</a></li>
+                <li><a href="{% url 'chat:enter' %}">聊天室</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" style="margin-right:10px">
+                {% if user.is_authenticated %}  <!--如果用户已登录-->
+                <li>
+                    <div class="dropdown" style="margin-top:8px">
+                        <!--下拉菜单-->
+                        <button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu' data-toggle='dropdown'>
+                            {{ user.username }}<span class='caret'></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'account:my_information' %}">个人信息</a></li>
+                            <li><a href="{% url 'account:edit_my_information' %}">完善信息</a></li>
+                            <li><a href="{% url 'account:password_change' %}">修改密码</a></li>
+                            <li><a href="{% url 'account:password_reset' %}">密码重置</a></li>
+                            <li><a href="{% url 'article:article_column' %}">后台管理</a></li>
+                            <li><a href="#">我的私信（施工）</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li><a href="{% url 'account:user_logout' %}">注销</a></li>
+                {% else %}
+                <li><a href="{% url 'account:user_login' %}">登录</a></li>
+                <li><a href="{% url 'account:user_register' %}">注册</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>

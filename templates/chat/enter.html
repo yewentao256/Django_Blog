@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}选择聊天室{% endblock %}
+{% block content %}
+
+<div>
+    <h3>尊敬的{{ request.user.username }}，您想进入的聊天室是？（名称不能包含汉字）</h3>
+    <input id="room-name-input" type="text" size="100"/><br/>
+    <input id="room-name-submit" type="button" value="进入"/>
+</div>
+
+<script>
+    document.querySelector('#room-name-input').focus();
+    document.querySelector('#room-name-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#room-name-submit').click();
+        }
+    };
+
+    document.querySelector('#room-name-submit').onclick = function(e) {
+        var roomName = document.querySelector('#room-name-input').value;    //获取输入的名称
+        var re = new RegExp("[\\u4E00-\\u9FFF]+","g");    //检查汉字的正则表达式
+
+        if (re.test(roomName))
+        {
+            alert("请不要在房间名中输入汉字")
+        }
+        else{
+            window.location.pathname = '/chat/' + roomName + '/';   //访问该url
+        }
+
+    };
+</script>
+
+
+{% endblock %}

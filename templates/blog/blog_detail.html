@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} blog titles {% endblock %}
+
+{% block content %}
+<div class="row text-center vertical-middlw-sm">
+    <h1>{{article.title}}</h1>  <!--居中显示文章标题-->
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-8">    <!--一种分布格式-->
+        <p class="text-center">
+            <span>{{article.author.username}}</span>    <!--显示作者名称-->
+            <span style="margin-left:20px">{{publish}}</span>   <!--距离作者名称20px显示发布日期-->
+        </p>
+        <div>
+            {{article.body}}
+        </div>
+    </div>
+</div>
+{% endblock %}

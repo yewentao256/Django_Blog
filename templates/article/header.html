@@ -1,0 +1,20 @@
+{% load staticfiles %}
+<div class="container">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static '/images/logo.jpg' %}" width="20px"></a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav" role="tablist">
+                <li><a href="{% url 'home' %}">网站主页</a></li>
+                <li><a href="{% url 'article:article_column' %}">后台管理</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" style="margin-right:10px">
+                <li><a href="{% url 'blog:blog_list' %}">我的博客</a></li>
+                <li><a href="#" style="text-color:red">{{ user.username }}</a></li>
+                <li><a href="{% url 'account:user_logout' %}">注销</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>

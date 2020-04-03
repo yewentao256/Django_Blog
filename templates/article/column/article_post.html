@@ -1,0 +1,91 @@
+{% extends "article/base.html" %}
+{% load staticfiles %}
+{% block title %}文章栏目{% endblock %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'editor/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'editor/css/editormd.css' %}">
+
+<div style="margin-left:10px">
+    <form class="form-horizontal" action="." method="post">
+        {% csrf_token %}
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 text-right"><span>标题:</span></div>
+            <div class="col-md-10 text-left">{{article_post_form.title}}</div>  <!--用于输入文章标题-->
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 text-right"><span>栏目:</span></div>
+            <div class="col-md-10 text-left">
+                <select id="which_column">
+                    {% for column in article_columns %} <!--将所有栏目用选择的形式展现-->
+                    <option value="{{column.id}}">{{column.column}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 text-right"><span>文章标签:</span></div>
+            <div class="col-md-10 text-left">
+                {% for tag in article_tags %}
+                <label class="checkbox-inline">     <!--bootstrap提供复选框-->
+                    <input class="tagcheckbox" type="checkbox" id="{{ tag.id }}" name="article_tag" value="{{ tag.tag }}"> {{ tag.tag }}
+                </label>
+                {% empty %}
+                <p>您还没有设定文章标签，请<a href="{% url 'article:article_tag' %}">设置</a></p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 text-right"><span>内容:</span></div>
+            <!--<div class="col-md-10 text-left">{{article_post_form.body}}</div>   用于输入文章内容-->
+            <div id="editormd" class="col-md-10 text-left">     <!--使用markdown输入文章内容-->
+                <textarea style="display:none;" id="id_body"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <input type="button" class="btn btn-primary btn-lg" value="发布" onclick="publish_article()">
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src='{% static "js/jquery.js" %}'></script>
+<script type="text/javascript" src="{% static 'js/layer.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/json2.js' %}"></script>
+<script type="text/javascript" src='{% static "editor/editormd.min.js" %}'></script>
+<script type="text/javascript">
+    $(function() {
+        var editor = editormd("editormd", {
+            width : "100%",
+            height : 640,
+            syncScrolling : "single",
+            path : "{% static 'editor/lib/' %}"
+        });
+    });
+</script>
+
+<script type="text/javascript">
+function publish_article(){
+    var title = $("#id_title").val();
+    var column_id = $("#which_column").val();
+    var body = $("#id_body").val();
+    var article_tags = [];
+    $.each($("input[name='article_tag']:checked"), function(){article_tags.push($(this).val());});
+    $.ajax({
+        url: "{% url 'article:article_post' %}",
+        type: "POST",
+        data: {"title":title, "body":body, "column_id":column_id, "tags":JSON.stringify(article_tags)}, //传入参数
+        success: function(e){
+            if(e=="成功上传"){
+                //layer.msg("成功上传！");
+                location.href = "{% url 'article:article_list' %}";//修改后：文章发布成功后跳转到文章列表
+            }else if(e=="表单有效，但上传失败"){
+                layer.msg("表单有效，但上传失败") ;
+            }else{
+                layer.msg("项目名称必须填写，不能为空。");
+            }
+        },
+    });
+}
+</script>
+
+{% endblock %}

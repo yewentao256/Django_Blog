@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}私聊窗口{% endblock %}
+{% block content %}
+
+    {% if user1 == request.user.username %}
+    <h3>正在与{{ user2 }}进行聊天</h3>>
+    {% else %}
+    <h3>正在与{{ user1 }}进行聊天</h3>>
+    {% endif %}
+
+
+    <textarea id="contact-log" cols="100" rows="20"></textarea><br/>
+    <h3>{{ request.user.username }}，欢迎您！请在此输入信息进行聊天</h3>>
+    <input id="contact-message-input" type="text" size="80"/>
+    <input id="contact-message-submit" type="button" value="发送"/>
+{% endblock %}

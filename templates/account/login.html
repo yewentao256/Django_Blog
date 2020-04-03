@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}登录{% endblock %}
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+    <h1>登录</h1>
+    <p>请输入您的账户和密码</p>
+    <div>
+        <span class="">{{ message }}</span>
+    </div>
+    <form class="form-horizontal" action="{% url 'account:user_login' %}?next={{ next_url }}" method="post">
+        {% csrf_token %} <!--post提交数据时必须要加，防止csrf攻击-->
+        <!--
+            form.as_p  ：将表单的每个输入框包裹在一个<p>标签内 tags
+            form.as_table ：将表单渲染成一个表格元素，每个输入框作为一个<tr>标签
+            form.as_ul  将表单渲染成一个列表元素，每个输入框作为一个<li>标签
+        -->
+        <!--{{ form.as_p }}     注：这里将其注释，因为原版样式不好看。下面采用的是新的样式-->
+
+        <div class="form-group">
+            <label for="{{form.username.id_for_label}}" class="col-md-5 control-label" style="color:blue">
+                <span class="glyphicon glyphicon-user"></span>  <!--打上一个人形图标label-->
+                用户名
+            </label>
+            <div class="col-mid-6 text-left">{{form.username}}&emsp;<a href="{% url 'account:user_register' %}">注册用户</a></div>
+        </div>
+        <div class="form-group">
+            <label for="{{form.username.id_for_label}}" class="col-md-5 control-label" style="color:blue">
+                <span class="glyphicon glyphicon-floppy-open"></span><!--打上一个密码图标label-->
+                密码
+            </label>
+            <div class="col-mid-6 text-left">{{form.password}}&emsp;<a href="{% url 'account:password_reset' %}">重置密码</a></div>
+        </div>
+        <div class="form-group">
+            <label for="{{form.verify.id_for_label}}" class="col-md-5 control-label" style="color:blue">
+                <span class="glyphicon glyphicon-book"></span> 验证码
+            </label>
+            <div class="col-mid-6 text-left">{{form.verify}}&emsp;
+                <span class="" title="点击切换验证码" id="id_change_verify" onclick="change_verify()">
+                    <img src="{% url 'account:verify_image' 120 40 %}" />
+                </span>
+            </div>
+        </div>
+        <input type="submit" class="btn btn-primary btn-lg" value="登录">
+    </form>
+</div>
+
+
+<script>
+    function change_verify() {
+        // alert('切换验证码');
+        let url = "{% url 'account:verify_image' 120 40 %}";
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);  //get请求，请求地址，是否异步
+        xhr.responseType = "blob";
+
+        // 如果是跨域请求，需要用到下面两行代码，
+        xhr.setRequestHeader("client_type", "DESKTOP_WEB");
+        xhr.setRequestHeader("desktop_web_access_key", _desktop_web_access_key="");
+
+        xhr.onload = function() {
+            if (this.status === 200) {
+                let blob = this.response;
+                // 二进制数据拿到了，那么要把它放在一个 html标签中，并且应该是img标签
+                let img = document.createElement("img");
+                img.onload = function(e) {
+                    window.URL.revokeObjectURL(img.src);
+                };
+                //有问题，将blob直接加载到img中，由于blob太大，会有性能影响，上方函数就是释放
+                img.src = window.URL.createObjectURL(blob);
+                // alert(img);
+                $("#id_change_verify").html(img);
+            }
+        };
+        xhr.send();
+    }
+</script>
+{% endblock %}

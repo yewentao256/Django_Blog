@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}聊天室{% endblock %}
+{% block content %}
+
+<div>
+
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+    <h3>{{ request.user.username }}，欢迎您！请在此输入信息进行聊天</h3>>
+    <input id="chat-message-input" type="text" size="80"/>
+    <input id="chat-message-submit" type="button" value="发送"/>
+</div>
+
+<script>
+    var roomName = "{{ room_name|escapejs }}";  // views返回的或者escapejs
+    var user_name = "{{ request.user.username }}";
+    //  创建websoket对象
+    var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+
+    // 收到后端信息后打印
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);  //解json包
+        var message = data['message'];
+        var time = data['time'];
+        var user_name = data['user_name'];
+        document.querySelector('#chat-log').value += (time + '\n');
+        document.querySelector('#chat-log').value += (user_name + '：' + message + '\n');  //chat-log 添加message和换行符
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    //传输给后端信息
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        if (message===""){
+            alert("请输入聊天信息再点击发送");
+        }
+        else{
+            //给后端发送message消息
+            chatSocket.send(JSON.stringify({'message': message,'user_name':user_name}));
+        }
+
+        messageInputDom.value = '';
+    };
+</script>
+
+{% endblock %}
